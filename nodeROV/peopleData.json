@@ -1,0 +1,91 @@
+{
+  "luke": {
+    "name": "Luke Skywalker",
+    "photos": [
+      {
+        "caption": "Luke ready to fight.",
+        "photoURL": "https://d1ai9qtk9p41kl.cloudfront.net/assets/mc/psuderman/2015_12/LukeGreenSaber-MOROTJ.png"
+      },
+      {
+        "caption": "GQ Luke.",
+        "photoURL": "https://s-media-cache-ak0.pinimg.com/736x/2f/b7/dc/2fb7dc3e5cb7b12b454aa1bfdf45573f.jpg"
+      },
+      {
+        "caption": "Luke looking pensive.",
+        "photoURL": "http://esq.h-cdn.co/assets/15/43/980x490/landscape-1445356666-star-wars-luke-skywalker-tatooine.jpg"
+      }
+    ]
+  },
+
+  "beyonce": {
+    "name": "Beyonce",
+    "photos": [
+      {
+        "caption": "Halftime Beyonce.",
+        "photoURL": "https://pmchollywoodlife.files.wordpress.com/2016/02/beyonce-steals-super-bowl-half-time-show-watch-ftr1.jpg"
+      },
+      {
+        "caption": "Pregnant Beyonce.",
+        "photoURL": "http://ll-media.tmz.com/2017/02/01/0201-beyonce-twins-pregnant-instagram-8.jpg"
+      },
+      {
+        "caption": "Beyonce eating a flower.",
+        "photoURL": "http://www.billboard.com/files/styles/article_main_image/public/media/beyonce-tour-bb5-topline-2016-billboard-650.jpg"
+      }
+    ]
+  },
+
+  "einstein": {
+    "name": "Albert Einstein",
+    "photos": [
+      {
+        "caption": "Teaching Einstein.",
+        "photoURL": "http://www.amnh.org/var/ezflow_site/storage/images/media/amnh/images/exhibitions/past-exhibitions/einstein2/einstein_smalldynamiclead/434266-1-eng-US/einstein_smalldynamiclead_dynamic_lead_slide.jpg"
+      },
+      {
+        "caption": "Silly Einstein.",
+        "photoURL": "https://userscontent2.emaze.com/images/8affdf21-ab35-4db3-bcb7-79519c3a2207/e46ad53a68c5c8289b076159e534c635.jpg"
+      },
+      {
+        "caption": "Einstein was a musician?",
+        "photoURL": "http://static5.businessinsider.com/image/5644e008dd089578608b4876-480/albert-einstein.jpg"
+      }
+    ]
+  },
+
+  "ta-nehisi": {
+    "name": "Ta-Nehisi Coates",
+    "photos": [
+      {
+        "caption": "Ta-Nehisi Speaking.",
+        "photoURL": "http://mediad.publicbroadcasting.net/p/wnpr/files/styles/x_large/public/201506/18491520735_dc69b2ffa2_o.jpg"
+      },
+      {
+        "caption": "Ta-Nehisi up close.",
+        "photoURL": "http://assets.feministing.com/wp-content/uploads/2015/11/ta-nehisi-coates-nina-subin_wide-7757d564e70b8fd9b1fbadde9c7b26e0e926ff76.jpg"
+      },
+      {
+        "caption": "Ta-Nehisi leaning on a wall.",
+        "photoURL": "http://a.scpr.org/i/4aa0c65116634ca76da575a35cf51a5c/112261-full.jpg"
+      }
+    ]
+  },
+
+  "marie": {
+    "name": "Marie Curie",
+    "photos": [
+      {
+        "caption": "Marie doing science.",
+        "photoURL": "http://thebestyoumagazine.co/wp-content/uploads/2013/04/madame-curie.jpg"
+      },
+      {
+        "caption": "Marie doing more science.",
+        "photoURL": "http://italiaxlascienza.it/main/wp-content/uploads/2017/02/238.jpg"
+      },
+      {
+        "caption": "Marie, pondering.",
+        "photoURL": "http://s1.thingpic.com/images/X1/Zc1tSDms1xdANiheHHnCoCpS.jpeg"
+      }
+    ]
+  }
+}
