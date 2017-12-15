@@ -1,0 +1,25 @@
+
+#define Grove_Water_Sensor 4 // Attach Water sensor to Arduino Digital Pin 4
+
+void setup() {
+  
+  Serial.begin(9600);
+  pinMode(Grove_Water_Sensor, INPUT); // The Water Sensor is an Input
+}
+
+void loop() {
+   WaterSensor();   
+   delay(50);
+}
+
+/* The water sensor will switch LOW when water is detected.
+void WaterSensor()
+{
+  Serial.print("Water_Sensor: ");
+  if (digitalRead(Grove_Water_Sensor) == 0)
+    Serial.println("Dry");
+  if (digitalRead(Grove_Water_Sensor) == 1)
+    Serial.println("Wet");  
+}
+
+

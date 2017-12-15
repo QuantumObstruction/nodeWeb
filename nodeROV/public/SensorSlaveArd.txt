@@ -1,0 +1,77 @@
+#include <Wire.h>
+
+#define Grove_Water_Sensor 4 // Attach Water sensor to Arduino Digital Pin 4
+#define Ultra_Sonic_Trig 3
+#define Ultra_Sonic_Echo 2
+#define SLAVE_ADDR 0x07
+
+int maximumRange = 300; // Maximum range needed
+int minimumRange = 0; // Minimum range needed
+long duration, distance; // Duration used to calculate distance
+
+void setup() {
+  Serial.begin(9600); 
+  pinMode(Grove_Water_Sensor, INPUT); // The Water Sensor is an Input 
+  pinMode(Ultra_Sonic_Trig, OUTPUT);
+  pinMode(Ultra_Sonic_Echo, INPUT);
+  Wire.begin(7);                // join i2c bus with address #8
+  Wire.onRequest(requestEvent); // register event
+
+}
+
+void loop() { 
+ Wire.onRequest(requestEvent); 
+   DistanceSensor();
+   delay(200);
+}
+
+int DistanceSensor()
+{
+  /* The following Ultra_Sonic_Trig/Ultra_Sonic_Echo cycle is used to determine the
+   distance of the nearest object by bouncing soundwaves off of it. */ 
+   digitalWrite(Ultra_Sonic_Trig, LOW); 
+   delayMicroseconds(2); 
+  
+   digitalWrite(Ultra_Sonic_Trig, HIGH);
+   delayMicroseconds(10); 
+   
+   digitalWrite(Ultra_Sonic_Trig, LOW);
+   duration = pulseIn(Ultra_Sonic_Echo, HIGH);
+   
+//   Calculate the distance (in cm) based on ruler measurmnt (Plug and test).
+   distance = duration/65;
+   Serial.print("Distance_Sensor: ");
+
+   if (distance >= maximumRange || distance <= minimumRange){
+     
+     Serial.println("-1");
+     return -1;
+   } else {     
+     Serial.println(distance);
+    
+   int n = distance;
+   return n;
+}
+}
+
+// The water sensor will switch LOW when water is detected.
+int WaterSensor()
+{
+  Serial.print("Water_Sensor: ");
+  if (digitalRead(Grove_Water_Sensor) == 0)
+    //if dry
+    return 0;
+  if (digitalRead(Grove_Water_Sensor) == 1)
+    //if wet
+    return 1;;  
+}
+
+// function that executes whenever data is requested by master
+// this function is registered as an event, see setup()
+void requestEvent() {
+  byte n[2];
+ n[0] = {DistanceSensor()};
+  n[1] = {WaterSensor()};
+  Wire.write(n,2); 
+ }
+
