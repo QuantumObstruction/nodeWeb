@@ -1,16 +1,129 @@
+
+
 var path = require('path');
+var Repeat = require('repeat');
 var express = require('express');
 var exphbs = require('express-handlebars');
 var bodyParser = require('body-parser');
-
 var peopleData = require('./peopleData');
 var app = express();
 var port = process.env.PORT || 3000;
+var i2c = require('i2c-bus');
 
 app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
 app.set('view engine', 'handlebars');
 
 app.use(bodyParser.json());
+
+var arduinoThruster_ADDR = 0x08,
+    arduinoThruster_REG   = 0x00,
+    arduinoThruster_DATA_LENGTH = 0x05;
+    const buf0 = new Buffer([0x00, 0x00,0x00,0x00,0x00,0x00]);
+
+var arduinoServo_ADDR = 0x09,
+    arduinoServo_REG   = 0x00,
+    arduinoServo_DATA_LENGTH = 0x05;
+    const buf1 = new Buffer([0x00, 0x00,0x00,0x00,0x00,0x00]);
+
+var arduinoSensor_ADDR = 0x07,
+    arduinoSensor_REG   = 0x00,
+    arduinoSensor_DATA_LENGTH = 0x05;
+    const buf2 = new Buffer([0x00, 0x00,0x00,0x00,0x00,0x00]);
+
+
+
+i2c2 = i2c.openSync(1);
+
+i2c2.i2cWrite(arduinoSensor_ADDR, arduinoSensor_DATA_LENGTH, buf2, function (err) {
+
+console.log("WORKING??++++>", buf2);
+Repeat( function () {
+    if (err) {
+        console.log("SENSORS DOWN on i2cWrite");
+    }
+
+
+    i2c2.i2cRead(arduinoSensor_ADDR, arduinoSensor_DATA_LENGTH, buf2, function (err) {
+        if (err) {
+            console.log("SERVOS DOWN on i2cRead");
+        }
+	console.log("arduinoSensor_ADDR==== ", arduinoSensor_ADDR);
+	console.log("arduinoSensor_DATA_LENGTH====", arduinoSensor_DATA_LENGTH);
+        console.log(buf2.toString());
+    
+
+
+});
+    }).every(100, 'ms').start.now();
+});
+
+
+
+
+
+
+
+
+
+
+
+i2c0 = i2c.openSync(1);
+
+i2c0.i2cWrite(arduinoThruster_ADDR, arduinoThruster_DATA_LENGTH, buf0, function (err) {
+
+    if (err) {
+        console.log("THRUSTERS DOWN on i2cWrite");
+    }
+
+    i2c0.i2cRead(arduinoThruster_ADDR, arduinoThruster_DATA_LENGTH, buf0, function (err) {
+        if (err) {
+            console.log("THRUSTERS DOWN on i2cRead");
+        }
+	console.log("arduinoThruster_ADDR==== ", arduinoThruster_ADDR);
+	console.log("arduinoThruster_DATA_LENGTH====", arduinoThruster_DATA_LENGTH);
+        console.log(buf0.toString());
+    });
+});
+
+
+i2c1 = i2c.openSync(1);
+
+i2c1.i2cWrite(arduinoServo_ADDR, arduinoServo_DATA_LENGTH, buf1, function (err) {
+
+    if (err) {
+        console.log("SERVOS DOWN on i2cWrite");
+    }
+
+    i2c1.i2cRead(arduinoServo_ADDR, arduinoServo_DATA_LENGTH, buf1, function (err) {
+        if (err) {
+            console.log("SERVOS DOWN on i2cRead");
+        }
+	console.log("arduinoServo_ADDR==== ", arduinoServo_ADDR);
+	console.log("arduinoServo_DATA_LENGTH====", arduinoServo_DATA_LENGTH);
+        console.log(buf1.toString());
+    });
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 app.get('/', function (req, res) {
   res.status(200).render('homePage');
