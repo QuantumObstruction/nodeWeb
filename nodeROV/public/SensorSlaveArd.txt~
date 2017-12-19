@@ -16,11 +16,10 @@ void setup() {
   pinMode(Ultra_Sonic_Echo, INPUT);
   Wire.begin(7);                // join i2c bus with address #8
   Wire.onRequest(requestEvent); // register event
+
 }
 
 void loop() { 
- Wire.onRequest(requestEvent); 
-   DistanceSensor();
    delay(200);
 }
 
@@ -69,8 +68,8 @@ int WaterSensor()
 // this function is registered as an event, see setup()
 void requestEvent() {
   byte n[2];
- n[0] = {DistanceSensor()};
-  n[1] = {WaterSensor()};
+ n[0] = DistanceSensor();
+  n[1] = WaterSensor();
   Wire.write(n,2); 
  }
 

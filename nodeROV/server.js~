@@ -50,7 +50,7 @@ Repeat( function () {
 	console.log("arduinoSensor_ADDR==== ", arduinoSensor_ADDR);
 	console.log("arduinoSensor_DATA_LENGTH====", arduinoSensor_DATA_LENGTH);
         console.log("Distance: ",buf2[0],"cm");
-
+console.log("Moisture Condition");
 if(buf2[1] === 0){    
 console.log("Moisture Condition Dry");
 } else {
