@@ -27,6 +27,7 @@
     "html5-gamepad": "^1.1.0",
     "window": "^4.2.4",
     "repeat": "0.0.6",
-    "i2c-bus": "~1.2.4"
+    "i2c-bus": "~1.2.4",
+    "linux-gpio": "0.0.4"
   }
 }

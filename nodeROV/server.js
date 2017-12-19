@@ -31,12 +31,10 @@ var arduinoSensor_ADDR = 0x07,
     const buf2 = new Buffer([0x00, 0x00,0x00,0x00,0x00,0x00]);
 
 
-
 i2c2 = i2c.openSync(1);
 
 i2c2.i2cWrite(arduinoSensor_ADDR, arduinoSensor_DATA_LENGTH, buf2, function (err) {
 
-console.log("WORKING??++++>", buf2);
 Repeat( function () {
     if (err) {
         console.log("SENSORS DOWN on i2cWrite");
@@ -57,7 +55,7 @@ console.log("Moisture Condition Dry");
 console.log("DANGER Moisture Condition WET");
 }
 });
-    }).every(200, 'ms').start.now();
+    }) .every(200, 'ms').start.now();
 });
 
 
@@ -82,6 +80,7 @@ i2c0.i2cWrite(arduinoThruster_ADDR, arduinoThruster_DATA_LENGTH, buf0, function 
         if (err) {
             console.log("THRUSTERS DOWN on i2cRead");
         }
+		console.log(buf0);
 	console.log("arduinoThruster_ADDR==== ", arduinoThruster_ADDR);
 	console.log("arduinoThruster_DATA_LENGTH====", arduinoThruster_DATA_LENGTH);
         console.log(buf0.toString());
