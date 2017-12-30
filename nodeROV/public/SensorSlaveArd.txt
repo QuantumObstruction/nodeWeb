@@ -11,6 +11,7 @@ long duration, distance; // Duration used to calculate distance
 
 void setup() {
   Serial.begin(9600); 
+  pinMode(BLine, OUTPUT);
   pinMode(Grove_Water_Sensor, INPUT); // The Water Sensor is an Input 
   pinMode(Ultra_Sonic_Trig, OUTPUT);
   pinMode(Ultra_Sonic_Echo, INPUT);
@@ -20,8 +21,47 @@ void setup() {
 }
 
 void loop() { 
-   delay(200);
+  
 }
+
+
+
+bool startTranssmission() {
+  int time = 0;
+  int timeOut = 3000;
+  int deltaT = 100;
+  bool lineBusy = isBusy();
+  while (lineBusy) {
+    if (timeOut <= time) { Serial.print("TIMEOUT: "); return false; }
+    delay(deltaT);
+    time += deltaT;
+    lineBusy = isBusy();
+  }
+  setBusy(true);
+  return true;
+}
+
+bool finishTranssmission() {
+  setBusy(false);
+  return true;
+}
+
+
+bool isBusy() {
+    bool output =  digitalRead(BLine);
+//    Serial.print("isBusy(): "); Serial.println(output);
+    return output;
+}
+
+
+void setBusy(bool outPut) {
+//    pinMode(BLine, OUTPUT);
+    digitalWrite(BLine, outPut);
+//    Serial.print("setBusy(): "); Serial.println(outPut);
+//    pinMode(BLine, INPUT_PULLUP);
+}
+
+
 
 int DistanceSensor()
 {
