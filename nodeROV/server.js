@@ -50,7 +50,7 @@ var buf2 = new Buffer([0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
 
 
 function arduinoThrusters() {
-i2c0 = i2c.openSync(1);
+var i2c0 = i2c.openSync(1);
 i2c0.i2cWrite(arduinoThruster_ADDR, arduinoThruster_DATA_LENGTH, buf0, function(err) {
 
     if (err) {
@@ -67,7 +67,7 @@ i2c0.i2cWrite(arduinoThruster_ADDR, arduinoThruster_DATA_LENGTH, buf0, function(
 }
 
 function arduinoServos() {
-i2c1 = i2c.openSync(1);
+var i2c1 = i2c.openSync(1);
 i2c1.i2cWrite(arduinoServo_ADDR, arduinoServo_DATA_LENGTH, buf1, function(err) {
     if (err) {
         console.log("SERVOS DOWN on i2cWrite");
@@ -85,7 +85,7 @@ i2c1.i2cWrite(arduinoServo_ADDR, arduinoServo_DATA_LENGTH, buf1, function(err) {
 }
 
 function arduinoSensors() {
-i2c2 = i2c.openSync(1);
+var i2c2 = i2c.openSync(1);
 
 i2c2.i2cWrite(arduinoSensor_ADDR, arduinoSensor_DATA_LENGTH, buf2, function(err) {    
         if (err) {
@@ -95,7 +95,6 @@ i2c2.i2cWrite(arduinoSensor_ADDR, arduinoSensor_DATA_LENGTH, buf2, function(err)
             if (err) {
                 console.log("SENSORS DOWN on i2cRead");
             }
-
             console.log("Distance: ", buf2[0], "cm");
 
             if (buf2[1] === 0) {
@@ -131,99 +130,88 @@ i2c2.i2cWrite(arduinoSensor_ADDR, arduinoSensor_DATA_LENGTH, buf2, function(err)
 
 function callShit(){
 	arduinoSensors();
-	arduinoServos();
-	arduinoThrusters();
+	//arduinoServos();
+	//arduinoThrusters();
 }
 
 
 
 
 
-function getBus() {
-	gpio.export(57, {}, function(err, pin) {
-  if (err) {
-    while(err)
-			break;
-  	} else {
-    pin.value(function(err,state) {
-      if (err) {
-        while(err)
-		break;
-      } else {
-		console.log("STATE: ", state);
-	while(!state) { 
-		console.log("WAIT");
-		break;
-		}
-	if(state){
-		console.log("TAKING Bus");
- 		pin.direction(gpio.DIR_OUT, function(err) {
-	if(err) { 
-		while(err)
-		break;
-		} else {
-    		console.log("Pin %d configured as output", pin.pin);
-    		//callShit();
-		 	pin.direction(gpio.DIR_IN, function(err) {
-		if(err) {
-			while(err)
-				break;
-				} else {
-      				console.log("Pin %d configured as input", pin.pin);
-      			}
-    			});
-				}
-  				});
-				}
-				}
-    			});
-  				}
-				});
-}//getBus()
+//function getBus() {
+//	gpio.export(57, {}, function(err, pin) {
+//  if (err) {
+//    while(err)
+//			break;
+//  	} else {
+//    pin.value(function(err,state) {
+//      if (err) {
+//        while(err)
+//		break;
+//      } else {
+//		console.log("STATE: ", state);
+//	while(!state) { 
+//		console.log("WAIT");
+//		break;
+//		}
+//	if(state){
+//		console.log("TAKING Bus");
+// 		pin.direction(gpio.DIR_OUT, function(err) {
+//	if(err) { 
+//		while(err)
+//		break;
+//		} else {
+//    		console.log("Pin %d configured as output", pin.pin);
+//    		//callShit();
+//		 	pin.direction(gpio.DIR_IN, function(err) {
+//		if(err) {
+//			while(err)
+//				break;
+//				} else {
+//      				console.log("Pin %d configured as input", pin.pin);
+//      			}
+//    			});
+//				}
+//  				});
+//				}
+//				}
+//    			});
+//  				}
+//				});
+//}//getBus()
 
 
 
 
-	var totalRun = 0;
-	var count = 0;
-Repeat(function() {
-totalRun++;
-	console.log(totalRun);	
+	//var totalRun = 0;
+	//var count = 0;
+//Repeat(function() {
+//totalRun++;
+//	console.log(totalRun);	
+//callShit();
+//}).every(1000, 'ms').start.now();
 
-//getBus();
-test();
-}).every(10, 'ms').start.now();
+var myPythonScriptPath = 'script.py';
 
+// Use python shell
+var PythonShell = require('python-shell');
+var pyshell = new PythonShell(myPythonScriptPath);
 
-
-
-
-function test() {
-
-gpio.export(57, {direction: gpio.DIR_OUT}, function(err, pin) {
-  if (err) {
-    console.error(err);
-  } else {
-    pin.set(function(err) {
-      if (err) {
-        console.error(err);
-      } else {
-        var count = 20;
-        var interval = setInterval(function() {
-          pin.toggle(function(err) {
-            count--;
-            if (err || !count) {
-              clearInterval(interval);
-              gpio.close();
-            }
-          });
-        }, 1000);
-      }
-    });
-  }
+pyshell.on('message', function (message) {
+    // received a message sent from the Python script (a simple "print" statement)
+    console.log(message);
 });
 
-}
+// end the input stream and allow the process to exit
+pyshell.end(function (err) {
+    if (err){
+        throw err;
+    };
+
+    console.log('finished');
+});
+
+
 
 
 
