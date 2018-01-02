@@ -1,5 +1,4 @@
 "use strict";
-
 var path = require('path');
 var Repeat = require('repeat');
 var express = require('express');
@@ -10,30 +9,11 @@ var app = express();
 var port = process.env.PORT || 3000;
 var i2c = require('i2c-bus');
 var gpio = require('linux-gpio');
+var i2c2 = i2c.openSync(1);
 
-app.engine('handlebars', exphbs({
-    defaultLayout: 'main'
-}));
-app.set('view engine', 'handlebars');
-
-app.use(bodyParser.json());
-
-////////////////////////////////////////////GPIO????????????
-//pinNum = 57;
-//pinVal = false;
-
-
-
-//var Gpio = require('onoff').Gpio,
-  //button = new Gpio(57, 'in', 'both');
-
-
-
-
-
-var arduinoThruster_ADDR = 0x08,
-    arduinoThruster_REG = 0x00,
-    arduinoThruster_DATA_LENGTH = 0x05;
+var arduinoThrusters_ADDR = 0x08,
+    arduinoThrusters_REG = 0x00,
+    arduinoThrusters_DATA_LENGTH = 0x05;
 var buf0 = new Buffer([0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
 
 var arduinoServo_ADDR = 0x09,
@@ -46,56 +26,104 @@ var arduinoSensor_ADDR = 0x07,
     arduinoSensor_DATA_LENGTH = 0x05;
 var buf2 = new Buffer([0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
 
+// Use python shell
+var PythonShell = require('python-shell');
+
+var options1 = {
+  mode: 'text',
+  pythonPath: '/usr/bin/python',
+  pythonOptions: ['-u'],
+  scriptPath: './Adafruit_Python_LSM303/examples',
+  args: []
+};
+
+var options = {
+  mode: 'text',
+  pythonPath: '/usr/bin/python',
+  pythonOptions: ['-u'],
+  scriptPath: '.',
+  args: []
+};
+///////////////////////////////////////////////////////////////////////////
+
+function lsm303PY(){
+PythonShell.run('./simpletest.py', options1, function (err, results) {
+		// received a message sent from the Python script (a simple "print" statement)			
+		console.log('Accel: ');
+		console.log("X: ", results[0]);
+		console.log("Y: ", results[1]);
+		console.log("Z: ", results[2]);
+				console.log('Mag: ');
+		console.log("X: ", results[0]);
+		console.log("Y: ", results[1]);
+		console.log("Z: ", results[2]);
+});
+}
+
+
+function l3d20PY(){	PythonShell.run('./L3GD20.py', options, function (err, results) {
+		// received a message sent from the Python script (a simple "print" statement)
+	var gyro = results.slice(0, 3);
+			
+		console.log('Gyro: ');
+		console.log(gyro[0]);
+		console.log(gyro[1]);
+		console.log(gyro[2]);
+	});
+}
+
+
+	var totalRun = 0;
+var interval = setInterval(function() {
+totalRun++;
+	console.log("Total Run: ",totalRun);	
+		lsm303PY();
+		l3d20PY();
+		arduinoSensors();
+		arduinoServos();
+		arduinoThrusters();
+}, 1000);//ms
+
+
+//	var totalRun = 0;
+//	//var count = 0;
+//Repeat(function() {
+//totalRun++;
+//console.log(totalRun);	
+//arduinoSensors();
+//arduinoServos();
+//arduinoThrusters();
+
+//}).every(1000, 'ms').start.now();
 
 
 
 function arduinoThrusters() {
-var i2c0 = i2c.openSync(1);
-i2c0.i2cWrite(arduinoThruster_ADDR, arduinoThruster_DATA_LENGTH, buf0, function(err) {
 
-    if (err) {
-        console.log("THRUSTERS DOWN on i2cWrite");
-    }
+i2c2.i2cWriteSync(arduinoThrusters_ADDR, arduinoThrusters_DATA_LENGTH, buf0);
 
-    i2c0.i2cRead(arduinoThruster_ADDR, arduinoThruster_DATA_LENGTH, buf0, function(err) {
-        if (err) {
-            console.log("THRUSTERS DOWN on i2cRead");
-        }
-        console.log("Thrusters", buf0.toString());
-    });
-});
+      while(  i2c2.i2cReadSync(arduinoThrusters_ADDR, arduinoThrusters_DATA_LENGTH, buf0) === 0){}
+	console.log("Thrusters: ",buf0.toString());
 }
 
 function arduinoServos() {
-var i2c1 = i2c.openSync(1);
-i2c1.i2cWrite(arduinoServo_ADDR, arduinoServo_DATA_LENGTH, buf1, function(err) {
-    if (err) {
-        console.log("SERVOS DOWN on i2cWrite");
-    }
 
-    i2c1.i2cRead(arduinoServo_ADDR, arduinoServo_DATA_LENGTH, buf1, function(err) {
-        if (err) {
-            console.log("SERVOS DOWN on i2cRead");
-        }
-   
-        console.log("Servos: ", buf1.toString());
-    });
+i2c2.i2cWriteSync(arduinoServo_ADDR, arduinoServo_DATA_LENGTH, buf1);
 
-});
+      while(  i2c2.i2cReadSync(arduinoServo_ADDR, arduinoServo_DATA_LENGTH, buf1) === 0){}
+	console.log("Servos: ",buf1.toString());
 }
 
 function arduinoSensors() {
-var i2c2 = i2c.openSync(1);
 
-i2c2.i2cWrite(arduinoSensor_ADDR, arduinoSensor_DATA_LENGTH, buf2, function(err) {    
-        if (err) {
-            console.log("SENSORS DOWN on i2cWrite");
-        }
-        i2c2.i2cRead(arduinoSensor_ADDR, arduinoSensor_DATA_LENGTH, buf2, function(err) {
-            if (err) {
-                console.log("SENSORS DOWN on i2cRead");
-            }
+i2c2.i2cWriteSync(arduinoSensor_ADDR, arduinoSensor_DATA_LENGTH, buf2);
 
+      while(  i2c2.i2cReadSync(arduinoSensor_ADDR, arduinoSensor_DATA_LENGTH, buf2) === 0){}
+         parseShit(buf2);
+}
+
+function parseShit(buf2){
+  if(buf2[0]> 0)
             console.log("Distance: ", buf2[0], "cm");
 
             if (buf2[1] === 0) {
@@ -103,98 +131,14 @@ i2c2.i2cWrite(arduinoSensor_ADDR, arduinoSensor_DATA_LENGTH, buf2, function(err)
             } else {
                 console.log("DANGER Moisture Condition WET");
             }
-        });    
-});
 }
 
+app.engine('handlebars', exphbs({
+    defaultLayout: 'main'
+}));
+app.set('view engine', 'handlebars');
 
-
-//function linetake() {
-//////Make Line BUSY for Arduino
-//  pin.direction(gpio.DIR_OUT, function(err) {
-//    console.log("Pin %d configured as output", pin.pin);
-//});
-//	console.log("Line Taken");
-///////////MLBfA
-
-//}
-
-//function lineRelease(){
-//	   ////Make Line READY for Arduino
-// pin.direction(gpio.DIR_IN, function(err) {
-//      //console.log("Pin %d configured as input", pin.pin);
-//	console.log("Line released");
-//    });
-
-//	////////MLRfA
-//}
-
-function callShit(){
-	arduinoSensors();
-	//arduinoServos();
-	//arduinoThrusters();
-}
-
-
-
-
-
-//function getBus() {
-//	gpio.export(57, {}, function(err, pin) {
-//  if (err) {
-//    while(err)
-//			break;
-//  	} else {
-//    pin.value(function(err,state) {
-//      if (err) {
-//        while(err)
-//		break;
-//      } else {
-//		console.log("STATE: ", state);
-//	while(!state) { 
-//		console.log("WAIT");
-//		break;
-//		}
-//	if(state){
-//		console.log("TAKING Bus");
-// 		pin.direction(gpio.DIR_OUT, function(err) {
-//	if(err) { 
-//		while(err)
-//		break;
-//		} else {
-//    		console.log("Pin %d configured as output", pin.pin);
-//    		//callShit();
-//		 	pin.direction(gpio.DIR_IN, function(err) {
-//		if(err) {
-//			while(err)
-//				break;
-//				} else {
-//      				console.log("Pin %d configured as input", pin.pin);
-//      			}
-//    			});
-//				}
-//  				});
-//				}
-//				}
-//    			});
-//  				}
-//				});
-//}//getBus()
-
-
-
-
-	var totalRun = 0;
-	var count = 0;
-Repeat(function() {
-totalRun++;
-	console.log(totalRun);	
-callShit();
-}).every(1000, 'ms').start.now();
-
-
-
-
+app.use(bodyParser.json());
 
 
 
@@ -246,4 +190,3 @@ app.post('*', function(req, res) {
 app.listen(port, function() {
     console.log("== Server listening on port:", port);
 });
-
